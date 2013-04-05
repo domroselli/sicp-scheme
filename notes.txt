@@ -1,0 +1,37 @@
+method - how to do something
+process (declarative knowledge) - what you're looking for
+    - like a magical spirit
+procedure
+    - a pattern of rules that controls a process
+
+
+Techniques for controlling complexity
+=====================================
+Black box abstraction
+    - not having to know what goes on inside
+Conventional interfaces
+    - generic operations
+    - large-scale structure and modularity
+        - object-oriented programming
+        - operations on aggregates
+Metalinguistic abstraction
+    - how to construct new languages
+    - we can use lisp to build a new language (such as a logic
+
+LEARNING LISP
+====================
+PRIMATIVE ELEMENTS
+Means of combination
+Means of abstraction
+
+combination
+(+ 3 17.4 5) -> 25.4
+
+parentheis means a combination
+
+lambda is lisps way of saying "make a procedure"
+There is no difference between these two:
+    (define square (lambda (x) (* x x) ))
+    (define (square x) (* x x))
+
+

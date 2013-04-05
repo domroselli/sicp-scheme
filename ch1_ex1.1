@@ -1,0 +1,188 @@
+#lang planet neil/sicp
+;;***************
+;; Exericise 1.1
+;;***************
+10
+;;10
+
+(+ 5 3 4)
+;;1
+
+(- 9 1)
+;;8
+
+(/ 6 2)
+;;3
+
+(+ (* 2 4) (- 4 6))
+;; 6
+
+(define a 3)
+
+(define b (+ a 1))
+
+(+ a b (* a b))
+;; 19
+
+(if (and (> b a) (< b (* a b)))
+    b
+    a)
+;; 4
+
+(cond ((= a 4) 6)
+      ((= b 4) (+ 6 7 a))
+      (else 25))
+;; 16
+
+(+ 2 (if (> b a) b a))
+;;6
+
+(* (cond ((> a b) a)
+         ((< a b) b)
+         (else -1))
+   (+ a 1))
+;; 16
+
+;;***************
+;; Exericise 1.2
+;;***************
+;; Translate into prefix form
+;; 5 + 4 + (2 - (3 - (6 + 4/5)))
+;; -----------------------------
+;;       3(6 - 2)(2 - 7)
+
+(/ 
+  (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
+  (* 3 (- 6 2) (- 2 7)))
+;; -37 /150
+
+;;***************
+;; Exericise 1.3
+;;***************
+(define (sqr x) (* x x))
+(define (sos x y) (+ (sqr x) (sqr y)))
+(define (two-largest-sos x y z)
+  (cond ((and (> x y) (> y z)) (sos x y))
+        ((and (> x y) (> z y)) (sos x z))
+        (else (sos y z))))
+
+(two-largest-sos 2 3 4)
+;; 25
+
+;;***************
+;; Exericise 1.4
+;;***************
+;; if b is positive, add a and b. else subtract
+
+;;***************
+;; Exericise 1.5
+;;***************
+;(define (p) (p))
+;(define (test x y)
+;  (if (= x 0)
+;      0
+;      y))
+;(test 0 (p))
+;; applicative-order eval
+;;=======================
+;; the compound procedure is evaluated and then the operands. This is done recursively
+;; so test is evaluated to the body of test and p and 0 are evalulated first
+;; the evaluted values of p and 0 (which of course are p and 0 respectively) are substituted
+;; into the body of test
+;;
+;; then we apply p and 0 to the body of test
+;; so the evaluated values of p and 0 replace the variables x and y
+
+;; normal-order eval
+;;=======================
+;; we evaluate the procedures recursively and substitute the unevaluated operands p and 0
+;; to the body of test. Once the procedures have been fully evaluated, we then evaluate the 
+;; operands.
+
+;; the un-evaluated values of p and 0 replace the variables of and x
+;; then we evaluate both p and 0
+;;
+;; In this case, it doesn't appear to make a difference since the number of evaluations
+;; is the same in either case
+
+;;***************
+;; Exericise 1.6
+;;***************
+;; Because it evals all arguments first, it will infinitely try to
+;; eval new-if since it's argument is sqrt-iter, which has a new-if
+;; expression in its arg list
+
+(define (abs x)
+  (if (> x 0) x (- x)))
+
+(define (square x) (* x x))
+
+(define (average x y)
+  (/ (+ x y) 2))
+
+(define (improve guess x)
+  (average guess (/ x guess)))
+
+(define (good-enough? guess x)
+  (< (abs (- (square guess) x)) 0.001))
+
+(define (sqrt-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (sqrt-iter (improve guess x)
+                x)))
+
+(define (new-if predicate then-clause else-clause)
+  (cond (predicate then-clause)
+        (else else-clause)))
+
+(define (sqrt-iter2 guess x)
+  (new-if (good-enough? guess x)
+      guess
+      (sqrt-iter2 (improve guess x)
+                x)))
+
+(define (sqrt x)
+  (sqrt-iter 1.0 x))
+
+(sqrt 4)
+;; horked
+;; (sqrt-iter2 1.0 4)
+
+;;***************
+;; Exericise 1.7
+;;***************
+(define (improved-good-enough? guess prev-guess)
+  (< (abs (- prev-guess guess)) 0.001))
+
+(define (improved-sqrt-iter guess prev-guess x)
+  (if (improved-good-enough? guess prev-guess)
+      guess
+      (improved-sqrt-iter (improve guess x) guess x)))
+
+(define (improved-sqrt x)
+  (improved-sqrt-iter 1.0 0 x))
+
+;; Test it
+(sqrt 99999999999999999999)
+(improved-sqrt 99999999999999999999)
+
+;;**************
+;; Exericise 1.8
+;;***************
+
+(define (cbrt-improve guess x)
+  (/ (+ (/ x (sqr guess)) (* 2 guess)) 3))
+
+(define (cbrt-good-enough? prev-guess guess)
+  (< (abs (- guess prev-guess)) 0.001))
+
+(define (cbrt-iter guess x)
+  (if (cbrt-good-enough? (cbrt-improve guess x) guess)
+      guess
+      (cbrt-iter (cbrt-improve guess x) x)))
+
+(define (cbrt x)
+  (cbrt-iter 1.0 x))
+
+(cbrt 27)
